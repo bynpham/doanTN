@@ -1,0 +1,158 @@
+<body style="background-image:url(/images/copy.jpg); background-position:center;">
+<div class="navbar navbar-inverse set-radius-zero">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/trangchu">
+
+                    <img src="/images/ic_logo.png">
+                </a>
+
+            </div>
+
+            <div class="right-div">
+                <a href="/dangxuat" class="btn btn-info pull-right">Đăng xuất</a>
+            </div>
+        </div>
+    </div>
+    <!-- LOGO HEADER END-->
+    <section class="menu-section">
+        <div class="container">
+            <div class="row ">
+                <div class="col-md-12">
+                    <div class="navbar-collapse collapse ">
+                        <ul id="menu-top" class="nav navbar-nav navbar-right">
+                            
+                            <li><a href="/users/nguoidung" class="menu-top-active">Tài khoản</a></li>
+                            <li><a href="/danhmuc">Danh mục</a></li>
+                            <li><a href="/danhsachsp">Sản phẩm</a></li>
+                             <li><a href="/api/order/lichsumuahang" >Lịch sử mua hàng</a></li>
+                            
+
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+     <!-- MENU SECTION END-->
+    <div class="content-wrapper">
+         <div class="container">
+        <div class="row pad-botm">
+            
+
+        </div>
+             
+                           
+             <div class="row">
+      <div class="col-md-15">
+        <!--    Hover Rows  -->
+        <div class="panel panel-default">
+          <div class="col-md-4">
+                <h4 class="header-line">Danh sách người dùng</h4>
+                
+                            </div>
+          <div class="panel-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>STT</th>
+                    
+                    <th>Tên đăng nhập</th>
+                    <th>Vai trò</th>
+                    <th>Điều hướng</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each users}}
+                  <tr>
+                    <td>{{sothutu @index}}</td>
+                    
+                    <td>{{this.username}}</td>
+                    <td>{{this.role}}</td>
+
+                    <td>
+                      
+                        <button class="btn btn-primary" onclick="goEdit('{{this._id}}')">
+                          <i class="fa fa-edit"></i>
+                          Đổi vai trò
+                        </button>
+                        {{! </a> }}
+
+                      
+                    </td>
+                  </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- End  Hover Rows  -->
+      </div>
+    </div>
+            
+
+             <div class="row">
+                 
+                  
+             
+             </div>
+             
+            
+
+    </div>
+    </div>
+    
+     <!-- CONTENT-WRAPPER SECTION END-->
+    </div>
+    <section id="main-content">
+           
+  </div>
+</section>
+    
+<script>
+  let delete_id;
+  const goEdit = (id) => { 
+      console.log("edit",id);
+      const url = `http://localhost:3000/users/switch-role/${id}`;
+    const option = {
+      method: 'post',
+      headers: { "Content-Type": "application/json" }
+    }
+    try {
+      
+        fetchAPI(url, option); 
+        window.location.href = "/users/nguoidung";
+    } catch (e) {
+      console.log("Delete Error: ", e);
+    }
+   }
+  const goDelete = (id) => { delete_id = id }
+  const fetchAPI = async (url, option) => {
+    const res = await fetch(url, option);
+    return res.json;
+  }
+  const onDelete = async () => {
+    const url = `http://localhost:3000/users/nguoidung/${delete_id}`;
+    const option = {
+      method: 'delete',
+      headers: { "Content-Type": "application/json" }
+    }
+    try {
+      await
+        fetchAPI(url, option); window.location.href = "/users/nguoidung";
+    } catch (e) {
+      console.log("Delete Error: ", e);
+    }
+  }
+</script>
+
+</body>

@@ -1,0 +1,193 @@
+<body style="background-image:url(images/copy.jpg); background-position:center;">
+<div class="navbar navbar-inverse set-radius-zero">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/trangchu">
+
+                     <img src="/images/ic_logo.png">
+                </a>
+
+            </div>
+
+            <div class="right-div">
+                <a href="/dangxuat" class="btn btn-info pull-right">Đăng xuất</a>
+            </div>
+        </div>
+    </div>
+    <!-- LOGO HEADER END-->
+    <section class="menu-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="navbar-collapse collapse ">
+                        <ul id="menu-top" class="nav navbar-nav navbar-right">
+                            <li><a href="/users/nguoidung">Tài khoản</a></li>
+                            <li><a href="/danhmuc" class="menu-top-active">Danh mục</a></li>
+                            <li><a href="/danhsachsp">Sản phẩm</a></li>
+                            <li><a href="/api/order/lichsumuahang" >Lịch sử mua hàng</a></li>
+
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- MENU SECTION END-->
+    <div class="content-wrapper">
+  <div class="container">
+    <div class="row pad-botm">
+      <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+        Thêm danh mục
+      </button>
+
+      <div>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+          aria-hidden="true" style="display: none">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                  ×
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                  Thêm danh mục
+                </h4>
+              </div>
+              <div class="panel-body">
+                <form role="form" method="post" action="/danhmuc">
+
+                  <div class="form-group">
+                    <label>Tên danh mục</label>
+                    <input class="form-control" type="text" name="name" />
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                  Đóng
+                </button>
+                    <button type="submit" class="btn btn-primary">
+                      Lưu
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <!-- Modal delete -->
+        <div class="modal fade" id="myModalDelete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+          aria-hidden="true" style="display: none">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                  ×
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                  Bạn muốn xóa danh mục này?
+                </h4>
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                  Không
+                </button>
+                <button type="submit" onclick="onDelete()" class="btn btn-primary">Có</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- End modal delete -->
+      </div>
+    </div>
+
+    <!-- /. ROW  -->
+
+    <!-- /. ROW  -->
+
+    <!-- /. ROW  -->
+    <div class="row">
+      <div class="col-md-12">
+        <!--    Hover Rows  -->
+        <div class="panel panel-default">
+          <div class="panel-heading">Danh sách danh mục</div>
+          <div class="panel-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>STT</th>
+                    
+                    <th>Tên danh mục</th>
+                    <th>Điều hướng</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each categories}}
+                  <tr>
+                    <td>{{sothutu @index}}</td>
+                    
+                    <td>{{this.name}}</td>
+
+                    <td>
+                      {{!-- <a href="/sanpham/{{this.id}}/edit"> --}}
+                        <button class="btn btn-primary" onclick="goEdit('{{this._id}}')">
+                          <i class="fa fa-edit"></i>
+                          Sửa
+                        </button>
+                        {{! </a> }}
+
+                      <button class="btn btn-danger" data-toggle="modal" data-target="#myModalDelete"
+                        onclick="goDelete('{{this._id}}')">
+                        <i class="fa fa-pencil"></i>
+                        Xóa
+                      </button>
+                    </td>
+                  </tr>
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <!-- End  Hover Rows  -->
+      </div>
+    </div>
+    <!-- /. ROW  -->
+  </div>
+</div>
+<!-- CONTENT-WRAPPER SECTION END-->
+
+    
+<script>
+  let delete_id;
+  const goEdit = (id) => { window.location.href = `/danhmuc/${id}/edit` }
+  const goDelete = (id) => { delete_id = id }
+  const fetchAPI = async (url, option) => {
+    const res = await fetch(url, option);
+    return res.json;
+  }
+  const onDelete = async () => {
+    const url = `http://localhost:3000/danhmuc/${delete_id}`;
+    const option = {
+      method: 'delete',
+      headers: { "Content-Type": "application/json" }
+    }
+    try {
+      await
+        fetchAPI(url, option); window.location.href = "/danhmuc";
+    } catch (e) {
+      console.log("Delete Error: ", e);
+    }
+  }
+</script>
+</body>

@@ -1,0 +1,259 @@
+<body style="background-image:url(images/copy.jpg); background-position:center;">
+
+    <div class="navbar navbar-inverse set-radius-zero">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/trangchu">
+
+                    <img src="/images/ic_logo.png">
+                </a>
+
+            </div>
+
+            <div class="right-div">
+                <a href="/dangxuat" class="btn btn-info pull-right">Đăng xuất</a>
+            </div>
+        </div>
+    </div>
+    <!-- LOGO HEADER END-->
+    <section class="menu-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="navbar-collapse collapse ">
+                        <ul id="menu-top" class="nav navbar-nav navbar-right">
+
+                            <li><a href="/users/nguoidung">Tài khoản</a></li>
+                            <li><a href="/danhmuc">Danh mục</a></li>
+                            <li><a href="/danhsachsp" >Sản phẩm</a></li>
+                            <li><a href="/api/order/lichsumuahang">Lịch sử mua hàng</a></li>
+
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- MENU SECTION END-->
+    <div class="content-wrapper">
+        <div class="container">
+            <div class="row pad-botm">
+
+                <div class="col-md-12">
+</div>
+                <div class="row">
+
+                    {{!-- <div class="col-md-12">
+                    </div> --}}
+                    <div class="panel panel-default">
+                        <div class="content-header">
+                            <h4 class="header-line">Danh sách sản phẩm</h4>
+                            
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>STT</th>
+
+                                            <th>Tên</th>
+                                            <th>Giá</th>
+                                            <th>Danh mục</th>
+                                            <th>Hình ảnh</th>
+                                            <th>Mô tả</th>
+                                            <th>Size</th>
+                                            
+
+                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each products}}
+                                        <tr>
+                                            <td>{{sothutu @index}}</td>
+
+                                            <td>{{this.name}}</td>
+                                            <td>{{this.price}} $</td>
+                                            <td>{{this.category}} </td>
+                                            <td><img src="{{this.image}}" width="70" height="70" />
+                                            </td>
+                                            <td>{{this.description}}</td>
+                                            <td>{{this.size}}</td>
+                                            
+
+                                            
+                                        </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="DeleteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal"
+                                    aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">Bạn có muốn xóa sản phẩm</h4>
+                            </div>
+
+                            <div class="modal-footer">
+                                <div class="panel-body">
+
+
+
+                                    <button onclick="onClose()" type="button" class="btn btn-default"
+                                        data-dismiss="modal">Không</button>
+                                    <button type="button" onclick="onDelete()" class="btn btn-primary">Có</button>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <script>
+                    let delete_id;
+
+                    const goDelete = (id) => {
+                        delete_id = id;
+                    }
+                    const fetchAPI = async (url, option) => {
+                        const res = await fetch(url, option);
+                        return res.json();
+
+                    }
+                    const onDelete = async () => {
+                        const url = `http://localhost:3000/danhsachsp/${delete_id}`;
+                        const option = {
+                            method: 'delete',
+                            headers: { 'Content-Type': 'application/json' }
+                        }
+                        try {
+                            await fetchAPI(url, option);
+                            window.location.href = '/danhsachsp';
+                        } catch (e) { console.log('Delete error: ', e) }
+                    }
+
+                    const firebaseConfig = {
+                        apiKey: "AIzaSyB_mDA_pzcyBlAl7etMKEfWD8oQSPSSlW4",
+                        authDomain: "lab6-302803.firebaseapp.com",
+                        projectId: "lab6-302803",
+                        storageBucket: "lab6-302803.appspot.com",
+                        messagingSenderId: "343976349202",
+                        appId: "1:343976349202:web:bb8c8e88576ad9412a12cb",
+                        measurementId: "G-RG4Z8Z9YK5"
+                    };
+                    firebase.initializeApp(firebaseConfig);
+
+                    const onEdit = (id, name, price) => {
+                        document.getElementById('name').value = name;
+                    }
+                    const onChangeFile = () => {
+                        const file = document.getElementById('img-file').files[0];
+                        const reader = new FileReader();
+                        reader.onload = e => {
+                            document.getElementById('img-view').src = e.target.result;
+                            document.getElementById('img-view').classList.remove('display-none');
+
+                        }
+                        reader.readAsDataURL(file);
+
+                        //upload
+                        const ref = firebase.storage().ref(uuid());
+                        const uploadTask = ref.put(file);
+                        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED,
+                            (snapshot) => { },
+                            (erorr) => { console.log('firebase: ', erorr) },
+                            () => {
+                                uploadTask.snapshot.ref.getDownloadURL().then(url => {
+                                    document.getElementById('image').value = url;
+                                    console.log(url);
+                                })
+                            }
+                        )
+
+                    }
+
+                    const uuid = () => {
+                        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                            return v.toString(16);
+                        });
+
+
+                    }
+
+                    const validationForm = () => {
+                        const name = document.getElementById('name').value;
+                        const price = document.getElementById('price').value;
+                        const image = document.getElementById('image').value;
+                        const published = document.getElementById('published').value;
+                        if (!name || !price || !image || !published
+                            || name.trim().length == 0
+                            || price.trim().length == 0
+                            || price < 0
+                            || price > 100000000
+                            || new Date(published).getTime() > new Date().getTime()) {
+                            document.getElementById('buttonSave').disabled = true;
+                        } else {
+                            document.getElementById('buttonSave').disabled = false;
+                        }
+                    }
+
+                    const onSave = async () => {
+                        const url = `http://localhost:3000/danhsachsp/`;
+                        const name = document.getElementById('name').value;
+                        const price = document.getElementById('price').value;
+                        const image = document.getElementById('image').value;
+                        const published = document.getElementById('published').value;
+                        const description = document.getElementById('description').value;
+                        const available = document.getElementById('available').value;
+                        const category = document.getElementById('category').value;
+                        const size = document.getElementById('size').value;
+                        const body = {
+                            name, price, image, published, description, available, category,size
+                        }
+                        const option = {
+                            method: 'post',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(body)
+                        }
+                        try {
+                            const result = await fetchAPI(url, option);
+                            if (result.status) {
+                                window.location.href = '/danhsachsp';
+                            } else {
+                                console.log(result);
+                                if (result.erorrs.length > 0) {
+                                    const msg = result.erorrs[0].msg;
+                                    document.getElementById('error-msg').innerText = msg;
+                                }
+                            }
+                        } catch (e) { console.log('Delete error: ', e) }
+                    }
+
+
+                </script>
+            </div>
+            <section id="main-content">
+
+        </div>
+        </section>
+</body>
